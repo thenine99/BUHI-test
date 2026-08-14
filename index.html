@@ -1,436 +1,836 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buhi IntelliFarm Control Hub</title>
-    <!-- Tailwind CSS for modern layout styling -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- Lucide Icons for dashboard elements -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BUHÌ IntelliFarm - Next-Gen Smart Aquaponics</title>
+  
+  <!-- Google Fonts & FontAwesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* ==========================================================================
+       APPLE / SAMSUNG LIGHT-MODE THEME & DESIGN SYSTEM
+       ========================================================================== */
+    :root {
+      --bg-main: #fafafa;
+      --bg-surface: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --brand-green: #10b981;
+      --brand-green-dark: #059669;
+      --brand-blue: #0284c7;
+      --brand-gradient: linear-gradient(135deg, #10b981 0%, #0284c7 100%);
+      --border-light: rgba(226, 232, 240, 0.8);
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.08);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ==========================================================================
+       SCROLL ANIMATION STYLES (REVEAL ON SCROLL)
+       ========================================================================== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(35px);
+      transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .delay-1 { transition-delay: 0.1s; }
+    .delay-2 { transition-delay: 0.2s; }
+    .delay-3 { transition-delay: 0.3s; }
+
+    /* ==========================================================================
+       HEADER WITH CUSTOMIZABLE bg.png (25% TRANSPARENCY)
+       ========================================================================== */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 1000;
+      border-bottom: 1px solid var(--border-light);
+      overflow: hidden;
+    }
+
+    .header-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      /* EDIT HEADER BACKGROUND IMAGE HERE */
+      background-image: url('bg.png'); 
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0.25; /* 25% Transparency */
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    nav {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo img {
+      height: 42px;
+      width: auto;
+      border-radius: 8px;
+    }
+
+    .logo-text {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+    }
+
+    .logo-text span {
+      background: var(--brand-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .nav-links a:hover {
+      color: var(--brand-green-dark);
+    }
+
+    .nav-cta {
+      background: var(--text-primary);
+      color: #fff !important;
+      padding: 0.55rem 1.25rem;
+      border-radius: 50px;
+      transition: var(--transition) !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--brand-green-dark) !important;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+    }
+
+    /* ==========================================================================
+       HERO SECTION WITH BACKGROUND PHOTO
+       ========================================================================== */
+    .hero {
+      position: relative;
+      padding: 10rem 2rem 6rem;
+      text-align: center;
+      max-width: 100%;
+      margin: 0 auto;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .hero-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      /* EDIT HERO BACKGROUND PHOTO HERE */
+      background-image: url('hero-bg.png'); 
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0.15; /* Adjust transparency if needed */
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(250, 250, 250, 0.85) 0%, rgba(250, 250, 250, 0.95) 100%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .hero-content {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.5rem 1.25rem;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: var(--brand-green-dark);
+      border-radius: 50px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1.5px;
+      margin-bottom: 1.5rem;
+      color: var(--text-primary);
+    }
+
+    .hero h1 span {
+      background: var(--brand-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      max-width: 880px;
+      margin: 0 auto 2.5rem;
+      font-weight: 400;
+      line-height: 1.7;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 1.2rem;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 0.95rem 2.2rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--brand-gradient);
+      color: #fff;
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.25);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(16, 185, 129, 0.35);
+    }
+
+    .btn-secondary {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-subtle);
+      transform: translateY(-2px);
+    }
+
+    /* ==========================================================================
+       GENERAL SECTIONS & CARDS
+       ========================================================================== */
+    section {
+      padding: 6rem 2rem;
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-title p {
+      color: var(--brand-blue);
+      font-size: 0.9rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-title h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: var(--text-primary);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-md);
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    .card i {
+      font-size: 2.2rem;
+      background: var(--brand-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1.2rem;
+      display: inline-block;
+    }
+
+    .card h3 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+    }
+
+    .card p, .card ul {
+      color: var(--text-secondary);
+      font-size: 0.98rem;
+    }
+
+    .card ul {
+      list-style-type: none;
+      margin-top: 0.8rem;
+    }
+
+    .card ul li {
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card ul li::before {
+      content: "✓";
+      color: var(--brand-green);
+      font-weight: bold;
+    }
+
+    /* ==========================================================================
+       PRODUCT FEATURE SECTION (AQUASENSE HARDWARE)
+       ========================================================================== */
+    .product-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 4rem 3rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .product-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .product-image-wrapper {
+      position: relative;
+      background: radial-gradient(circle at center, #f8fafc 0%, #e2e8f0 100%);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      text-align: center;
+      border: 1px solid var(--border-light);
+    }
+
+    .product-image-wrapper img {
+      max-width: 100%;
+      height: auto;
+      border-radius: var(--radius-md);
+      filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.12));
+      transition: var(--transition);
+    }
+
+    .product-image-wrapper:hover img {
+      transform: scale(1.03);
+    }
+
+    .badge-pill {
+      display: inline-block;
+      padding: 0.35rem 0.9rem;
+      background: rgba(2, 132, 199, 0.1);
+      color: var(--brand-blue);
+      border-radius: 50px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .indicator-list {
+      display: flex;
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .status-dot {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dot.green { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+    .dot.blue { background: #3b82f6; box-shadow: 0 0 8px #3b82f6; }
+    .dot.yellow { background: #eab308; box-shadow: 0 0 8px #eab308; }
+
+    /* ==========================================================================
+       APP & WEBSITE SHOWCASE SECTION
+       ========================================================================== */
+    .app-showcase {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #fff;
+      border-radius: var(--radius-lg);
+      padding: 4.5rem 3rem;
+      box-shadow: var(--shadow-lg);
+      margin-top: 3rem;
+    }
+
+    .app-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .app-info h3 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+
+    .app-info p {
+      color: #94a3b8;
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+
+    .app-preview-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      backdrop-filter: blur(10px);
+      text-align: center;
+    }
+
+    .app-preview-card img {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    }
+
+    /* ==========================================================================
+       SPLIT CONTENT SECTION (PARUGMON / STORY)
+       ========================================================================== */
+    .split-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .split-image img {
+      width: 100%;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-light);
+    }
+
+    /* ==========================================================================
+       FOOTER
+       ========================================================================== */
+    footer {
+      background: #ffffff;
+      border-top: 1px solid var(--border-light);
+      padding: 4rem 2rem 2rem;
+      margin-top: 4rem;
+    }
+
+    .footer-content {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+
+    .footer-section h4 {
+      color: var(--text-primary);
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .footer-section p, .footer-section a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.95rem;
+      transition: var(--transition);
+    }
+
+    .footer-section a:hover {
+      color: var(--brand-green-dark);
+    }
+
+    .footer-bottom {
+      max-width: 1240px;
+      margin: 0 auto;
+      border-top: 1px solid var(--border-light);
+      padding-top: 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* ==========================================================================
+       RESPONSIVE BREAKPOINTS
+       ========================================================================== */
+    @media (max-width: 992px) {
+      .hero h1 { font-size: 2.8rem; }
+      .product-container, .app-container, .split-container { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hero h1 { font-size: 2.2rem; }
+      .hero { padding-top: 7rem; }
+    }
+  </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen relative" 
-      style="background-image: repeating-linear-gradient(45deg, #f1f5f9 0, #f1f5f9 1px, transparent 0, transparent 20%); background-size: 16px 16px;">
+<body>
 
-    <!-- ==================== SPLASH / LOADING OVERLAY ==================== -->
-    <div id="loading-overlay" class="fixed inset-0 z-[100] bg-slate-900 flex items-center justify-center p-4 font-sans overflow-hidden select-none transition-opacity duration-500">
-        <div class="absolute inset-0 opacity-10 pointer-events-none" 
-             style="background-image: linear-gradient(#38bdf8 1px, transparent 1px), linear-gradient(90deg, #38bdf8 1px, transparent 1px); background-size: 32px 32px;"></div>
-        <div class="absolute -top-32 -left-32 w-96 h-96 bg-sky-500/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
+  <!-- NAVIGATION BAR WITH DYNAMIC bg.png BACKGROUND -->
+  <header>
+    <!-- Background overlay at 25% transparency -->
+    <div class="header-bg"></div>
 
-        <div class="w-full max-w-sm text-center z-10 space-y-8 p-6">
-            <div class="relative w-28 h-28 mx-auto flex items-center justify-center">
-                <div class="absolute inset-0 rounded-3xl bg-emerald-500/20 animate-ping"></div>
-                <div class="absolute inset-0 rounded-3xl bg-gradient-to-tr from-sky-500 to-emerald-500 blur-md opacity-60"></div>
-                
-                <!-- Loading Animation Logo -->
-                <div class="relative w-full h-full bg-slate-800 border-2 border-slate-700/80 rounded-3xl p-3 flex items-center justify-center shadow-2xl overflow-hidden">
-                    <img src="icon.jpg" 
-                         alt="Buhi IntelliFarm Logo" 
-                         class="w-full h-full object-contain drop-shadow-md rounded-xl"
-                         onerror="this.style.display='none'; document.getElementById('loading-logo-fallback').classList.remove('hidden')">
-                    
-                    <!-- Fallback Icon if logo.png fails to load -->
-                    <div id="loading-logo-fallback" class="hidden text-emerald-400">
-                        <i data-lucide="sprout" class="w-12 h-12"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="space-y-1">
-                <h1 class="text-2xl font-black text-white tracking-wide">Buhi IntelliFarm</h1>
-                <p class="text-xs text-emerald-400 font-semibold tracking-wider uppercase">Smart Hydro-Aquaponics</p>
-            </div>
-
-            <div class="space-y-3 max-w-xs mx-auto">
-                <div class="flex justify-between items-center text-xs font-medium">
-                    <span id="loading-status" class="text-slate-300">Connecting to telemetry...</span>
-                    <span id="progress-percent" class="text-sky-400 font-bold">0%</span>
-                </div>
-
-                <div class="w-full bg-slate-800 rounded-full h-2.5 p-0.5 border border-slate-700 overflow-hidden shadow-inner">
-                    <div id="progress-bar" 
-                         class="bg-gradient-to-r from-sky-500 via-teal-400 to-emerald-400 h-full rounded-full w-0 transition-all duration-300 ease-out shadow-sm"></div>
-                </div>
-            </div>
-
-            <p class="text-[11px] text-slate-500 pt-4">System Initializing &bull; Standby</p>
-        </div>
-    </div>
-
-    <!-- Top Navigation Bar -->
-    <header class="bg-white border-b border-slate-200 p-4 sticky top-0 z-50 flex justify-between items-center shadow-sm">
-        <div class="flex items-center space-x-3">
-            <!-- Header Nav Logo -->
-            <img src="logo.png" 
-                 alt="Buhi Logo" 
-                 class="w-10 h-10 object-contain rounded-md" 
-                 onerror="this.style.display='none'; document.getElementById('header-fallback-icon').classList.remove('hidden')">
-            
-            <!-- Fallback Icon if header logo fails to load -->
-            <div id="header-fallback-icon" class="hidden bg-emerald-800 p-2 rounded-lg text-white">
-                <i data-lucide="sprout"></i>
-            </div>
-            
-            <h1 class="text-xl font-extrabold tracking-tight text-slate-900">Buhi IntelliFarm <span class="text-emerald-800 font-medium">Control Hub</span></h1>
-        </div>
-        <div class="flex items-center space-x-2 text-sm text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-            <span class="w-2 h-2 bg-emerald-600 rounded-full animate-pulse"></span>
-            <span class="font-medium">Systems Active</span>
-        </div>
-    </header>
-
-    <!-- Main Content Container -->
-    <div class="max-w-7xl mx-auto p-4 md:p-6 pb-24">
-        
-        <!-- ==================== TAB: HOME PAGE ==================== -->
-        <section id="home-tab" class="tab-content space-y-6">
-            <div class="bg-gradient-to-br from-emerald-800 to-sky-900 rounded-2xl p-6 text-white shadow-lg">
-                <h2 class="text-2xl font-bold">Good day, Farmer</h2>
-                <p class="text-emerald-100 text-sm mt-1">Here is a quick breakdown of your farm environment today.</p>
-                
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-                    <div class="bg-white/10 backdrop-blur-xs p-3 rounded-xl border border-white/10">
-                        <span class="text-xs text-emerald-200 uppercase font-semibold">Water Temp</span>
-                        <p id="home-water-temp" class="text-xl font-bold text-white mt-0.5">-- °C</p>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-xs p-3 rounded-xl border border-white/10">
-                        <span class="text-xs text-emerald-200 uppercase font-semibold">pH Level</span>
-                        <p id="home-ph" class="text-xl font-bold text-white mt-0.5">--</p>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-xs p-3 rounded-xl border border-white/10">
-                        <span class="text-xs text-emerald-200 uppercase font-semibold">Air Temp</span>
-                        <p id="home-air-temp" class="text-xl font-bold text-white mt-0.5">-- °C</p>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-xs p-3 rounded-xl border border-white/10">
-                        <span class="text-xs text-emerald-200 uppercase font-semibold">Alerts</span>
-                        <p id="home-alerts" class="text-xl font-bold text-white mt-0.5">0 Active</p>
-                    </div>
-                </div>
-            </div>
-
-            <div>
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Control Panels</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <button onclick="switchTab('aquaponics')" class="bg-white border border-slate-200 hover:border-sky-700 p-5 rounded-2xl shadow-xs hover:shadow-md transition-all text-left flex items-start space-x-4 group cursor-pointer">
-                        <div class="bg-sky-50 text-sky-900 p-3 rounded-xl group-hover:bg-sky-950 group-hover:text-white transition-colors">
-                            <i data-lucide="droplet"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-slate-900">Aquaponics</h4>
-                            <p class="text-xs text-slate-500 mt-1">Fish tank stats & plant bed parameters</p>
-                        </div>
-                    </button>
-
-                    <button onclick="switchTab('environment')" class="bg-white border border-slate-200 hover:border-emerald-800 p-5 rounded-2xl shadow-xs hover:shadow-md transition-all text-left flex items-start space-x-4 group cursor-pointer">
-                        <div class="bg-emerald-50 text-emerald-800 p-3 rounded-xl group-hover:bg-emerald-900 group-hover:text-white transition-colors">
-                            <i data-lucide="sliders"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-slate-900">Env & Automation</h4>
-                            <p class="text-xs text-slate-500 mt-1">Air controls & water change schedule</p>
-                        </div>
-                    </button>
-
-                    <button onclick="switchTab('cctv')" class="bg-white border border-slate-200 hover:border-rose-800 p-5 rounded-2xl shadow-xs hover:shadow-md transition-all text-left flex items-start space-x-4 group cursor-pointer">
-                        <div class="bg-rose-50 text-rose-800 p-3 rounded-xl group-hover:bg-rose-950 group-hover:text-white transition-colors">
-                            <i data-lucide="video"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-slate-900">CCTV Cameras</h4>
-                            <p class="text-xs text-slate-500 mt-1">Live digital stream monitoring</p>
-                        </div>
-                    </button>
-
-                    <button onclick="switchTab('inventory')" class="bg-white border border-slate-200 hover:border-amber-800 p-5 rounded-2xl shadow-xs hover:shadow-md transition-all text-left flex items-start space-x-4 group cursor-pointer">
-                        <div class="bg-amber-50 text-amber-800 p-3 rounded-xl group-hover:bg-emerald-900 group-hover:text-white transition-colors">
-                            <i data-lucide="bar-chart-3"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-slate-900">Farm Stock</h4>
-                            <p class="text-xs text-slate-500 mt-1">Flora biomass & fauna headcounts</p>
-                        </div>
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- ==================== TAB: AQUAPONICS ==================== -->
-        <section id="aquaponics-tab" class="tab-content space-y-6 hidden">
-            <div class="bg-sky-950 text-white rounded-2xl p-6 shadow-md border border-sky-900">
-                <div class="flex items-center space-x-2 mb-4 text-sky-200">
-                    <i data-lucide="waves"></i>
-                    <h2 class="text-lg font-bold text-white">Fish Tank Monitoring</h2>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="bg-white/10 backdrop-blur-xs p-4 rounded-xl border border-white/10">
-                        <span class="text-xs font-medium text-sky-200">Dissolved Oxygen</span>
-                        <p id="aqua-do" class="text-xl font-bold mt-1 text-white">-- mg/L</p>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-xs p-4 rounded-xl border border-white/10">
-                        <span class="text-xs font-medium text-sky-200">Ammonia (NH3)</span>
-                        <p id="aqua-ammonia" class="text-xl font-bold mt-1 text-emerald-300">-- ppm</p>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-xs p-4 rounded-xl border border-white/10">
-                        <span class="text-xs font-medium text-sky-200">Water Level</span>
-                        <p id="aqua-water-level" class="text-xl font-bold mt-1 text-sky-300">--%</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-emerald-900 text-white rounded-2xl p-6 shadow-md border border-emerald-850">
-                <div class="flex items-center space-x-2 mb-4 text-emerald-200">
-                    <i data-lucide="leaf"></i>
-                    <h2 class="text-lg font-bold text-white">Plant Beds (Hydroponics/Aquaponics)</h2>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-white/10 backdrop-blur-xs p-4 rounded-xl border border-white/10">
-                        <span class="text-xs font-medium text-emerald-200">Water Flow Rate</span>
-                        <p id="aqua-flow-rate" class="text-xl font-bold mt-1 text-white">-- L/min</p>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-xs p-4 rounded-xl border border-white/10">
-                        <span class="text-xs font-medium text-emerald-200">EC (Electrical Conductivity)</span>
-                        <p id="aqua-ec" class="text-xl font-bold mt-1 text-emerald-300">-- mS/cm</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ==================== TAB: ENVIRONMENT & AUTOMATION ==================== -->
-        <section id="environment-tab" class="tab-content space-y-6 hidden">
-            <div class="bg-emerald-900 text-white rounded-2xl p-6 shadow-md border border-emerald-850">
-                <div class="flex items-center space-x-2 mb-4 text-emerald-200">
-                    <i data-lucide="wind"></i>
-                    <h2 class="text-lg font-bold text-white">Air Monitoring</h2>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="bg-white/10 backdrop-blur-xs p-4 rounded-xl border border-white/10">
-                        <span class="text-xs font-medium text-emerald-200">Humidity</span>
-                        <p id="env-humidity" class="text-xl font-bold text-white mt-1">--%</p>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-xs p-4 rounded-xl border border-white/10">
-                        <span class="text-xs font-medium text-emerald-200">CO2 Levels</span>
-                        <p id="env-co2" class="text-xl font-bold text-white mt-1">-- ppm</p>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-xs p-4 rounded-xl border border-white/10">
-                        <span class="text-xs font-medium text-emerald-200">VPD</span>
-                        <p id="env-vpd" class="text-xl font-bold text-white mt-1">-- kPa</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-sky-950 text-white rounded-2xl p-6 shadow-md border border-sky-900">
-                <div class="flex items-center space-x-2 mb-4 text-sky-200">
-                    <i data-lucide="cpu"></i>
-                    <h2 class="text-lg font-bold text-white">Automation Controls</h2>
-                </div>
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-white/10 backdrop-blur-xs rounded-xl border border-white/10 gap-4">
-                    <div>
-                        <h3 class="font-bold text-white">Automated Water Changer</h3>
-                        <p id="water-changer-status" class="text-xs text-sky-200 mt-0.5">Last cycle completed: --</p>
-                    </div>
-                    <button class="w-full sm:w-auto bg-white hover:bg-slate-100 text-sky-950 font-bold px-5 py-2.5 rounded-lg transition-colors cursor-pointer shadow-md">
-                        Trigger Water Change
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- ==================== TAB: CCTV & LIVE FEEDS ==================== -->
-        <section id="cctv-tab" class="tab-content hidden">
-            <div class="bg-sky-950 text-white rounded-2xl p-6 shadow-md border border-sky-900">
-                <div class="flex items-center space-x-2 mb-4 text-sky-200">
-                    <i data-lucide="video"></i>
-                    <h2 class="text-lg font-bold text-white">CCTV Monitoring</h2>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-slate-950 aspect-video rounded-xl relative overflow-hidden flex items-center justify-center border border-white/5 shadow-inner">
-                        <span class="absolute top-3 left-3 bg-red-600 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-sm tracking-wider flex items-center gap-1">
-                            <span class="w-1.5 h-1.5 bg-white rounded-full animate-ping"></span> Live - Tank Cam 1
-                        </span>
-                        <p class="text-slate-400 text-sm">Camera Stream Feed</p>
-                    </div>
-                    <div class="bg-slate-950 aspect-video rounded-xl relative overflow-hidden flex items-center justify-center border border-white/5 shadow-inner">
-                        <span class="absolute top-3 left-3 bg-red-600 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-sm tracking-wider flex items-center gap-1">
-                            <span class="w-1.5 h-1.5 bg-white rounded-full animate-ping"></span> Live - Canopy Bed
-                        </span>
-                        <p class="text-slate-400 text-sm">Camera Stream Feed</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ==================== TAB: INVENTORY / BIOMASS ==================== -->
-        <section id="inventory-tab" class="tab-content hidden">
-            <div class="bg-emerald-900 text-white rounded-2xl p-6 shadow-md border border-emerald-850">
-                <div class="flex items-center space-x-2 mb-4 text-emerald-200">
-                    <i data-lucide="clipboard-list"></i>
-                    <h2 class="text-lg font-bold text-white">Farm Flora & Fauna Stock</h2>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <h3 class="text-xs font-bold text-emerald-200 mb-2 uppercase tracking-wider">Fish Species Count</h3>
-                        <div class="space-y-2">
-                            <div class="bg-white/10 backdrop-blur-xs p-3 rounded-lg border border-white/10 flex justify-between items-center">
-                                <span class="font-medium text-white">Tilapia</span>
-                                <span id="stock-tilapia" class="text-white font-extrabold bg-white/20 px-2 py-1 rounded-md text-sm">-- pcs</span>
-                            </div>
-                            <div class="bg-white/10 backdrop-blur-xs p-3 rounded-lg border border-white/10 flex justify-between items-center">
-                                <span class="font-medium text-white">Giant Freshwater Prawn</span>
-                                <span id="stock-prawn" class="text-white font-extrabold bg-white/20 px-2 py-1 rounded-md text-sm">-- pcs</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <h3 class="text-xs font-bold text-emerald-200 mb-2 uppercase tracking-wider">Plant Volume</h3>
-                        <div class="space-y-2">
-                            <div class="bg-white/10 backdrop-blur-xs p-3 rounded-lg border border-white/10 flex justify-between items-center">
-                                <span class="font-medium text-white">Romaine Lettuce</span>
-                                <span id="stock-lettuce" class="text-emerald-300 font-extrabold bg-white/20 px-2 py-1 rounded-md text-sm">-- Heads</span>
-                            </div>
-                            <div class="bg-white/10 backdrop-blur-xs p-3 rounded-lg border border-white/10 flex justify-between items-center">
-                                <span class="font-medium text-white">Sweet Basil</span>
-                                <span id="stock-basil" class="text-emerald-300 font-extrabold bg-white/20 px-2 py-1 rounded-md text-sm">-- Pods</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-    </div>
-
-    <!-- Bottom App-Style Navigation Bar -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-2 shadow-xl z-50">
-        <div class="max-w-md mx-auto flex justify-around">
-            <button onclick="switchTab('home')" id="btn-home" class="nav-btn flex flex-col items-center gap-1 py-1 px-3 text-emerald-800 transition-all">
-                <i data-lucide="home" class="w-5 h-5"></i>
-                <span class="text-[10px] font-bold tracking-wide">Home</span>
-            </button>
-            <button onclick="switchTab('aquaponics')" id="btn-aquaponics" class="nav-btn flex flex-col items-center gap-1 py-1 px-3 text-slate-400 hover:text-slate-600 transition-all">
-                <i data-lucide="droplet" class="w-5 h-5"></i>
-                <span class="text-[10px] font-bold tracking-wide">Aqua</span>
-            </button>
-            <button onclick="switchTab('environment')" id="btn-environment" class="nav-btn flex flex-col items-center gap-1 py-1 px-3 text-slate-400 hover:text-slate-600 transition-all">
-                <i data-lucide="sliders" class="w-5 h-5"></i>
-                <span class="text-[10px] font-bold tracking-wide">Env & Auto</span>
-            </button>
-            <button onclick="switchTab('cctv')" id="btn-cctv" class="nav-btn flex flex-col items-center gap-1 py-1 px-3 text-slate-400 hover:text-slate-600 transition-all">
-                <i data-lucide="video" class="w-5 h-5"></i>
-                <span class="text-[10px] font-bold tracking-wide">CCTV</span>
-            </button>
-            <button onclick="switchTab('inventory')" id="btn-inventory" class="nav-btn flex flex-col items-center gap-1 py-1 px-3 text-slate-400 hover:text-slate-600 transition-all">
-                <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
-                <span class="text-[10px] font-bold tracking-wide">Stock</span>
-            </button>
-        </div>
+    <nav>
+      <a href="#" class="logo">
+        <img src="logo.png" alt="BUHI IntelliFarm Logo" onerror="this.src='https://via.placeholder.com/42x42/10b981/ffffff?text=B'">
+        <span class="logo-text">BUHÌ <span>IntelliFarm</span></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#product">Hardware Device</a></li>
+        <li><a href="#app">Cloud Dashboard</a></li>
+        <li><a href="#mission">Vision & Mission</a></li>
+        <li><a href="#commodities">Produce</a></li>
+        <li><a href="https://buhi-test.vercel.app/" target="_blank" class="nav-cta">Launch App <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem;"></i></a></li>
+      </ul>
     </nav>
+  </header>
 
-    <!-- UI Interaction & Loading Animation Script -->
-    <script>
-        // Initialize Icons
-        lucide.createIcons();
+  <!-- HERO SECTION WITH BACKGROUND PHOTO -->
+  <section class="hero" id="home">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
 
-        // Reactive function to switch layout tabs dynamically
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+    <div class="hero-content">
+      <div class="hero-badge reveal">
+        <i class="fa-solid fa-microchip"></i> Next-Gen IoT Smart Farm Systems
+      </div>
+      
+      <h1 class="reveal delay-1">
+        Reinventing Agriculture with <span>Intelligent Farming</span>
+      </h1>
+      
+      <p class="reveal delay-2">
+        <strong>OUR STORY</strong> – BUHI IntelliFarm idea started when ASF affected our community that led to a considerable number of abandoned pigpens[cite: 1]. Having a background of Agricultural and Biosystems Engineering and Computer Science, our team as children of backyard farmers wanted to transform these underutilized and ASF-affected pig pens into biosecure, high-yield aquaponics facilities powered by continuous IoT water telemetry and real-time monitoring devices and automated system[cite: 1].
+      </p>
+      
+      <div class="btn-group reveal delay-3">
+        <a href="#product" class="btn btn-primary"><i class="fa-solid fa-box-open"></i> Discover Hardware</a>
+        <a href="https://buhi-test.vercel.app/" target="_blank" class="btn btn-secondary"><i class="fa-solid fa-desktop"></i> Try Live App</a>
+      </div>
+    </div>
+  </section>
 
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('text-emerald-800');
-                btn.classList.add('text-slate-400');
-            });
+  <!-- HARDWARE SECTION (INSERT hardware-img.png HERE) -->
+  <section id="product">
+    <div class="product-section reveal">
+      <div class="product-container">
+        <div class="product-image-wrapper">
+          <!-- INSERT YOUR HARDWARE IMAGE BELOW (hardware-img.png) -->
+          <img src="hardware-img.png" alt="BUHI AquaSense IoT Hardware Device" onerror="this.src='https://via.placeholder.com/500x500?text=INSERT+hardware-img.png+HERE'">
+        </div>
+        <div class="product-details">
+          <span class="badge-pill">IIOT HARDWARE UNIT</span>
+          <h2>AquaSense IoT Controller</h2>
+          <p style="color: var(--text-secondary); font-size: 1.05rem; margin-top: 0.8rem;">
+            Our proprietary, ruggedized hardware module designed for industrial and backyard smart farm environments. Equipped with multi-probe sensor arrays and integrated wireless communication modules[cite: 1].
+          </p>
 
-            const activeBtn = document.getElementById(`btn-${tabName}`);
-            activeBtn.classList.add('text-emerald-800');
-            activeBtn.classList.remove('text-slate-400');
-        }
+          <div class="indicator-list">
+            <div class="status-dot"><span class="dot green"></span> SYSTEM ON</div>
+            <div class="status-dot"><span class="dot blue"></span> IOT ACTIVE</div>
+            <div class="status-dot"><span class="dot yellow"></span> DATA LOGGING</div>
+          </div>
 
-        // Loading Screen Logic
-        const statusMessages = [
-            { threshold: 10, text: "Connecting to telemetry..." },
-            { threshold: 40, text: "Fetching water parameters..." },
-            { threshold: 70, text: "Initializing CCTV feeds..." },
-            { threshold: 90, text: "Preparing dashboard..." },
-            { threshold: 100, text: "Ready!" }
-        ];
+          <div style="margin-top: 1.5rem;">
+            <div style="display: flex; gap: 12px; margin-bottom: 0.8rem; align-items: center;">
+              <i class="fa-solid fa-wifi" style="color: var(--brand-blue);"></i>
+              <span style="font-weight: 600; font-size: 0.95rem;">Dual Connectivity: WiFi & LoRa IoT Antenna</span>
+            </div>
+            <div style="display: flex; gap: 12px; margin-bottom: 0.8rem; align-items: center;">
+              <i class="fa-solid fa-vial-circle-check" style="color: var(--brand-green);"></i>
+              <span style="font-weight: 600; font-size: 0.95rem;">Multi-Sensor Interface (pH, Temp, DO, Water Level)</span>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <i class="fa-solid fa-bolt" style="color: var(--brand-blue);"></i>
+              <span style="font-weight: 600; font-size: 0.95rem;">Automated Filtration & Pump Controller Triggers[cite: 1]</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        let progress = 0;
-        const progressBar = document.getElementById('progress-bar');
-        const progressPercent = document.getElementById('progress-percent');
-        const loadingStatus = document.getElementById('loading-status');
-        const loadingOverlay = document.getElementById('loading-overlay');
+  <!-- APP & WEBSITE DASHBOARD SHOWCASE -->
+  <section id="app">
+    <div class="app-showcase reveal">
+      <div class="app-container">
+        <div class="app-info">
+          <span style="color: var(--brand-green); font-weight: 800; font-size: 0.85rem; letter-spacing: 1px;">WEB & MOBILE DASHBOARD</span>
+          <h3 style="margin-top: 0.5rem;">Manage Your Farm from Anywhere</h3>
+          <p>Gain total control over water quality parameters, automated pump cycles, and environmental metrics in real-time through our intuitive cloud application[cite: 1].</p>
+          <a href="https://buhi-test.vercel.app/" target="_blank" class="btn btn-primary">
+            Access Dashboard <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+        <div class="app-preview-card">
+          <img src="dashboard-preview.png" alt="BUHI Web Dashboard Interface" onerror="this.src='https://via.placeholder.com/600x380/0f172a/ffffff?text=BUHI+Web+App+Interface'">
+        </div>
+      </div>
+    </div>
+  </section>
 
-        const interval = setInterval(() => {
-            progress += Math.floor(Math.random() * 12) + 5;
-            if (progress > 100) progress = 100;
+  <!-- PARUGMON / STORY SECTION (INSERT parugmon-img.png HERE) -->
+  <section id="about">
+    <div class="section-title reveal">
+      <p>BACKGROUND & RATIONALE</p>
+      <h2>Reviving Traditional Parugmon Infrastructure</h2>
+    </div>
+    <div class="split-container">
+      <div class="split-text reveal delay-1">
+        <p style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+          African Swine Fever (ASF) left vast agricultural structures unused across rural communities[cite: 1]. <strong>BUHÌ IntelliFarm</strong> addresses this crisis by transforming abandoned pig pens into clean, biosecure, intelligent aquaponics installations[cite: 1].
+        </p>
+        <p style="font-size: 1rem; color: var(--text-secondary);">
+          Initiated at <strong>Brgy. Bun-od, Cuartero, Capiz</strong>, our project minimizes labor, optimizes resource consumption, and promotes climate-resilient local food production through automated telemetry[cite: 1].
+        </p>
+      </div>
+      <div class="split-image reveal delay-2">
+        <!-- INSERT YOUR PARUGMON SECTION IMAGE BELOW (parugmon-img.png) -->
+        <img src="parugmon-img.png" alt="Parugmon Pig Pen Rehabilitation" onerror="this.src='https://via.placeholder.com/600x400/f1f5f9/475569?text=INSERT+parugmon-img.png+HERE'">
+      </div>
+    </div>
+  </section>
 
-            progressBar.style.width = `${progress}%`;
-            progressPercent.textContent = `${progress}%`;
+  <!-- VISION & MISSION -->
+  <section id="mission">
+    <div class="section-title reveal">
+      <p>OUR STRATEGIC GOALS</p>
+      <h2>Vision & Mission</h2>
+    </div>
+    <div class="grid">
+      <div class="card reveal delay-1">
+        <i class="fa-solid fa-eye"></i>
+        <h3>Our Vision</h3>
+        <p>To establish BUHÌ IntelliFarm as Western Visayas' premier research, breeding, and demonstration hub for native freshwater species and sustainable smart agriculture[cite: 1].</p>
+      </div>
+      <div class="card reveal delay-2">
+        <i class="fa-solid fa-bullseye"></i>
+        <h3>Our Mission</h3>
+        <p>To equip smallholder farmers with accessible, scalable IIoT technology that improves productivity, reduces manual intervention, and protects local ecosystems[cite: 1].</p>
+      </div>
+      <div class="card reveal delay-3">
+        <i class="fa-solid fa-shield-halved"></i>
+        <h3>Value Proposition</h3>
+        <p>Continuous automated water monitoring, dynamic filtration, and automated refilling ensure pristine conditions for aquatic life and premium crops[cite: 1].</p>
+      </div>
+    </div>
+  </section>
 
-            const currentStatus = statusMessages.find(m => progress <= m.threshold);
-            if (currentStatus) {
-                loadingStatus.textContent = currentStatus.text;
-            }
+  <!-- COMMODITIES & RESEARCH -->
+  <section id="commodities">
+    <div class="section-title reveal">
+      <p>CULTIVATED PRODUCE & FISH</p>
+      <h2>Farm Commodities & Native Species</h2>
+    </div>
+    <div class="grid">
+      <div class="card reveal delay-1">
+        <i class="fa-solid fa-fish-fins"></i>
+        <h3>Native & High-Value Fish</h3>
+        <p>A breeding and research hub for local freshwater species[cite: 1]:</p>
+        <ul>
+          <li>Giant Freshwater Prawn (Ulang)[cite: 1]</li>
+          <li>Batod, Karpa sa Bukid, & Puyo[cite: 1]</li>
+          <li>Rami, Bagtis, Mudfish, & Tilapia[cite: 1]</li>
+        </ul>
+      </div>
+      <div class="card reveal delay-2">
+        <i class="fa-solid fa-seedling"></i>
+        <h3>Hydroponic Vegetables</h3>
+        <p>Clean, nutrient-rich produce nourished by recycled aquaponics water[cite: 1]:</p>
+        <ul>
+          <li>Fresh Premium Lettuce[cite: 1]</li>
+          <li>Pechay & Kangkong[cite: 1]</li>
+          <li>Culinary & Culinary Herbs[cite: 1]</li>
+        </ul>
+      </div>
+      <div class="card reveal delay-3">
+        <i class="fa-solid fa-chart-line"></i>
+        <h3>Business Viability</h3>
+        <p>Empowered by funding grants and scalable revenue models[cite: 1]:</p>
+        <ul>
+          <li>170% Projected ROI[cite: 1]</li>
+          <li>1.5 - 2 Years Payback Period[cite: 1]</li>
+          <li>Dual Revenue: Produce & IoT Hardware Installation[cite: 1]</li>
+        </ul>
+      </div>
+    </div>
+  </section>
 
-            if (progress === 100) {
-                clearInterval(interval);
-                setTimeout(() => {
-                    loadingOverlay.classList.add('opacity-0', 'pointer-events-none');
-                    setTimeout(() => {
-                        loadingOverlay.style.display = 'none';
-                    }, 500);
-                }, 500);
-            }
-        }, 180);
-    </script>
+  <!-- FOOTER -->
+  <footer id="contact">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>BUHÌ IntelliFarm</h4>
+        <p>IoT-enabled Smart Farm Management System transforming idle agricultural infrastructure into intelligent food production facilities[cite: 1].</p>
+      </div>
+      <div class="footer-section">
+        <h4>Quick Links</h4>
+        <a href="#about">About Project</a>
+        <a href="#product">AquaSense IoT Unit</a>
+        <a href="https://buhi-test.vercel.app/" target="_blank">Web Dashboard</a>
+        <a href="#mission">Vision & Mission</a>
+      </div>
+      <div class="footer-section">
+        <h4>Contact & Channels</h4>
+        <p><i class="fa-solid fa-envelope"></i> buhi.intellifarm@gmail.com[cite: 1]</p>
+        <p><i class="fa-solid fa-globe"></i> buhi.intellifarm.com[cite: 1]</p>
+        <p><i class="fa-brands fa-facebook"></i> facebook.com/buhi.intellifarm[cite: 1]</p>
+      </div>
+      <div class="footer-section">
+        <h4>Location</h4>
+        <p><i class="fa-solid fa-location-dot"></i> Brgy. Bun-od, Cuartero, Capiz, Philippines[cite: 1]</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 BUHÌ IntelliFarm. All Rights Reserved.</p>
+    </div>
+  </footer>
 
-    <!-- ==================== FIREBASE REALTIME DATABASE SCRIPT ==================== -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  <!-- SCROLL REVEAL SCRIPT -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.15
+      };
 
-        // Replace with your actual Firebase Project Configuration keys
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        // Listen to telemetry updates from your sensor node
-        const telemetryRef = ref(db, 'telemetry');
-
-        onValue(telemetryRef, (snapshot) => {
-            const data = snapshot.val();
-            if (!data) return;
-
-            // Update Home Tab Overview
-            if (data.waterTemp !== undefined) document.getElementById('home-water-temp').textContent = `${data.waterTemp}°C`;
-            if (data.ph !== undefined) document.getElementById('home-ph').textContent = data.ph;
-            if (data.airTemp !== undefined) document.getElementById('home-air-temp').textContent = `${data.airTemp}°C`;
-
-            // Update Aquaponics Tab
-            if (data.dissolvedOxygen !== undefined) document.getElementById('aqua-do').textContent = `${data.dissolvedOxygen} mg/L`;
-            if (data.ammonia !== undefined) document.getElementById('aqua-ammonia').textContent = `${data.ammonia} ppm`;
-            if (data.waterLevel !== undefined) document.getElementById('aqua-water-level').textContent = `${data.waterLevel}%`;
-            if (data.flowRate !== undefined) document.getElementById('aqua-flow-rate').textContent = `${data.flowRate} L/min`;
-            if (data.ec !== undefined) document.getElementById('aqua-ec').textContent = `${data.ec} mS/cm`;
-
-            // Update Environment Tab
-            if (data.humidity !== undefined) document.getElementById('env-humidity').textContent = `${data.humidity}%`;
-            if (data.co2 !== undefined) document.getElementById('env-co2').textContent = `${data.co2} ppm`;
-            if (data.vpd !== undefined) document.getElementById('env-vpd').textContent = `${data.vpd} kPa`;
+      const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+          }
         });
-    </script>
+      }, observerOptions);
+
+      const revealElements = document.querySelectorAll('.reveal');
+      revealElements.forEach(el => observer.observe(el));
+    });
+  </script>
 </body>
 </html>
